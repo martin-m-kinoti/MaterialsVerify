@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <app-layout title="Materials Catalogue">
 
     <!-- Search + filters -->
@@ -97,7 +97,7 @@ export default {
 </script>
 
 <style scoped>
-/* ── SEARCH & FILTERS ── */
+/* search & filters */
 .search-row { display: flex; }
 .search-input {
   width: 55%;
@@ -173,7 +173,7 @@ export default {
   font-weight: 500;
 }
 
-/* ── GRID ── */
+/* grid */
 .materials-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -256,5 +256,21 @@ export default {
 }
 .btn-order:hover { background: #0f7a55; color: #fff; }
 
-@media (max-width: 860px) { .materials-grid { grid-template-columns: 1fr; } }
+/* responsive */
+@media (max-width: 900px) {
+  .materials-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .search-input { width: 100%; }
+  .filter-row   { flex-direction: column; align-items: stretch; }
+  .filter-search-wrap { width: 100%; }
+  .filter-search { width: 100%; }
+  .filter-select { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .card-body { flex-direction: column; gap: 10px; }
+  .card-right { align-items: flex-start; flex-direction: row; gap: 12px; align-items: center; }
+}
 </style>

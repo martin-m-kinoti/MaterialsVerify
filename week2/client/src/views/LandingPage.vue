@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="landing">
     <!-- Navbar -->
     <nav class="navbar">
@@ -9,10 +9,10 @@
         </div>
         <div class="nav-actions">
           <router-link to="/login" class="btn-ghost">Sign In</router-link>
-          <router-link to="/register" class="btn-primary"
-            >Get Started</router-link
-          >
+          <router-link to="/register" class="btn-primary">Get Started</router-link>
         </div>
+        <!-- Mobile: single CTA -->
+        <router-link to="/register" class="btn-primary btn-mobile-cta">Get Started</router-link>
       </div>
     </nav>
 
@@ -520,7 +520,7 @@ export default {
   line-height: 1.7;
 }
 
-/* ── FEATURED MATERIALS ───────────────────────────── */
+/* featured materials */
 .featured {
   max-width: 1100px;
   margin: 0 auto;
@@ -655,7 +655,7 @@ export default {
   color: #fff;
 }
 
-/* ── STATS STRIP ──────────────────────────────────── */
+/* stats strip */
 .stats-strip {
   background: #0f2419;
   padding: 52px 2rem;
@@ -770,51 +770,61 @@ export default {
   color: #5de0a5;
 }
 
-/* ── RESPONSIVE ───────────────────────────────────── */
+/* Mobile CTA — hidden on desktop */
+.btn-mobile-cta { display: none; }
+
+/* responsive */
+
+/* Tablet */
 @media (max-width: 900px) {
-  .hero-inner {
-    flex-direction: column;
-    gap: 48px;
-  }
-  .hero-right {
-    flex-direction: row;
-    align-self: stretch;
-  }
-  .hero-stat-card {
-    flex: 1;
-  }
+  .hero-inner { flex-direction: column; gap: 40px; }
+  .hero-left  { align-items: center; text-align: center; }
+  .hero-sub   { max-width: 100%; }
+  .hero-actions { justify-content: center; }
+  .hero-right { flex-direction: row; align-self: stretch; }
+  .hero-stat-card { flex: 1; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* Phablet */
 @media (max-width: 768px) {
-  .footer-inner {
-    grid-template-columns: 1fr 1fr;
-  }
-  .stats-strip {
-    gap: 20px;
-  }
+  /* Navbar: hide desktop links, show single CTA */
+  .nav-actions { display: none; }
+  .btn-mobile-cta { display: inline-block; }
+
+  .hero { padding: 56px 1.25rem 48px; }
+  .hero-headline { letter-spacing: -1px; }
+  .hero-right { flex-direction: row; flex-wrap: wrap; }
+  .hero-stat-card { flex: 1; min-width: 120px; padding: 16px 20px; }
+
+  .how-it-works { padding: 60px 1.25rem; }
+  .featured     { padding: 60px 1.25rem; }
+
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .stats-strip  { padding: 40px 1.25rem; gap: 0; }
   .stat {
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0 16px 24px;
+    min-width: 50%;
   }
-  .stat:last-child {
-    border-bottom: none;
-  }
+  .stat:last-child { border-bottom: none; }
 }
 
+/* Mobile */
 @media (max-width: 480px) {
-  .hero-right {
-    flex-direction: column;
-  }
-}
+  .hero-inner   { gap: 32px; }
+  .hero-right   { flex-direction: column; }
+  .hero-stat-card { flex-direction: row; justify-content: space-between; padding: 14px 18px; }
+  .hstat-num    { font-size: 1.6rem; }
+  .hero-actions { flex-direction: column; width: 100%; }
+  .btn-lg, .btn-how { width: 100%; text-align: center; }
 
-@media (max-width: 480px) {
-  .footer-inner {
-    grid-template-columns: 1fr;
-  }
-  .footer-bottom {
-    flex-direction: column;
-    text-align: center;
-  }
+  .steps-grid   { grid-template-columns: 1fr; }
+  .materials-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .stats-strip  { padding: 32px 1rem; }
+  .stat         { min-width: 100%; }
 }
 </style>

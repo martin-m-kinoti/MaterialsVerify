@@ -1,8 +1,16 @@
-<template>
+﻿<template>
   <div class="db-layout">
 
+    <!-- Mobile overlay -->
+    <transition name="fade">
+      <div v-if="sidebarOpen" class="sidebar-overlay" @click="sidebarOpen = false"></div>
+    </transition>
+
     <!-- ── SIDEBAR ── -->
-    <aside class="sidebar">
+    <aside class="sidebar" :class="{ 'sidebar--open': sidebarOpen }">
+      <!-- Mobile close button -->
+      <button class="sidebar-close" @click="sidebarOpen = false" aria-label="Close menu">×</button>
+
       <div class="sidebar-logo">
         <img src="/logo.png" alt="MaterialsVerify" class="logo-img" />
         <span class="logo-text">MaterialsVerify</span>
@@ -27,12 +35,19 @@
     <!-- ── MAIN ── -->
     <main class="main">
       <header class="topbar">
+        <!-- Hamburger (mobile only) -->
+        <button class="hamburger" @click="sidebarOpen = true" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
         <h1 class="page-title">{{ title }}</h1>
+
         <div class="topbar-right">
           <span class="topbar-greeting">Hello, {{ userName }}</span>
           <div class="topbar-avatar">{{ userInitials }}</div>
         </div>
       </header>
+
       <div class="content">
         <slot />
       </div>
@@ -48,11 +63,20 @@ export default {
     title: { type: String, required: true },
   },
   data() {
-    return { userName: '', userRole: '' }
+    return {
+      userName: '',
+      userRole: '',
+      sidebarOpen: false,
+    }
   },
   computed: {
     userInitials() {
       return this.userName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    },
+  },
+  watch: {
+    $route() {
+      this.sidebarOpen = false
     },
   },
   created() {
@@ -73,6 +97,7 @@ export default {
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* root */
 .db-layout {
   font-family: 'DM Sans', sans-serif;
   display: flex;
@@ -80,7 +105,17 @@ export default {
   overflow: hidden;
 }
 
-/* ── SIDEBAR ── */
+/* overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 299;
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter, .fade-leave-to { opacity: 0; }
+
+/* sidebar */
 .sidebar {
   width: 210px;
   flex-shrink: 0;
@@ -88,7 +123,29 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 24px 0;
+  position: relative;
+  z-index: 300;
 }
+.sidebar-close {
+  display: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s;
+}
+.sidebar-close:hover { background: rgba(255,255,255,0.25); }
+
 .sidebar-logo {
   display: flex;
   align-items: center;
@@ -105,6 +162,7 @@ export default {
   letter-spacing: -0.3px;
   white-space: nowrap;
 }
+
 .sidebar-nav {
   flex: 1;
   display: flex;
@@ -114,9 +172,9 @@ export default {
 }
 .nav-item {
   display: block;
-  padding: 10px 12px;
+  padding: 11px 14px;
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: rgba(255,255,255,0.65);
   text-decoration: none;
@@ -158,27 +216,63 @@ export default {
 }
 .user-role { font-size: 0.72rem; color: rgba(255,255,255,0.55); }
 
-/* ── MAIN ── */
-.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+/* main */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  min-width: 0;
+}
 
+/* topbar */
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 28px;
+  gap: 12px;
+  padding: 0 24px;
+  height: 64px;
   border-bottom: 1px solid #f0f0f0;
   flex-shrink: 0;
   background: #fff;
 }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #0f2419;
+  border-radius: 2px;
+}
 .page-title {
   font-family: 'Sora', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #0f2419;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.4px;
+  flex: 1;
 }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-.topbar-greeting { font-size: 0.875rem; color: #777; }
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.topbar-greeting {
+  font-size: 0.85rem;
+  color: #888;
+  white-space: nowrap;
+}
 .topbar-avatar {
   width: 34px;
   height: 34px;
@@ -191,22 +285,50 @@ export default {
   font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
+  flex-shrink: 0;
 }
 
+/* content */
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: 28px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-@media (max-width: 860px) { .sidebar { width: 170px; } }
-@media (max-width: 640px) {
-  .db-layout { flex-direction: column; height: auto; }
-  .sidebar { width: 100%; }
-  .sidebar-nav { flex-direction: row; flex-wrap: wrap; padding: 12px; }
-  .main { height: 100vh; }
+/* responsive */
+
+/* Tablet: narrower sidebar */
+@media (max-width: 1024px) {
+  .sidebar { width: 190px; }
+  .topbar-greeting { display: none; }
+}
+
+/* Mobile: slide-in sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .sidebar--open {
+    transform: translateX(0);
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.18);
+  }
+  .sidebar-close { display: flex; }
+  .hamburger { display: flex; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 16px; }
+}
+
+@media (max-width: 480px) {
+  .page-title { font-size: 1rem; }
+  .content { padding: 12px; gap: 14px; }
 }
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <app-layout title="Place an Order">
 
     <!-- Description bar -->
@@ -90,7 +90,7 @@ export default {
 </script>
 
 <style scoped>
-/* ── DESCRIPTION ── */
+/* description */
 .order-desc {
   font-size: 0.875rem;
   color: #777;
@@ -98,7 +98,7 @@ export default {
   max-width: 680px;
 }
 
-/* ── STEPPER ── */
+/* stepper */
 .stepper {
   display: flex;
   align-items: flex-start;
@@ -159,7 +159,7 @@ export default {
 }
 .step--done .step-line { background: #0f7a55; }
 
-/* ── SECTION BAR ── */
+/* section bar */
 .section-bar {
   display: flex;
   align-items: center;
@@ -181,7 +181,7 @@ export default {
   font-weight: 600;
 }
 
-/* ── CART GRID ── */
+/* cart grid */
 .cart-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -247,7 +247,7 @@ export default {
 .badge-amber { background: #fff8e6; color: #8a5a00; border: 1px solid #f5d68a; }
 .badge-red   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-/* ── EMPTY STATE ── */
+/* empty state */
 .empty-cart {
   display: flex;
   align-items: center;
@@ -262,7 +262,7 @@ export default {
 .empty-cart a { color: #0f7a55; font-weight: 600; text-decoration: none; }
 .empty-cart a:hover { text-decoration: underline; }
 
-/* ── FOOTER ── */
+/* footer */
 .order-footer {
   display: flex;
   justify-content: flex-start;
@@ -283,5 +283,24 @@ export default {
 .btn-continue:hover:not(:disabled) { background: #0a5e40; }
 .btn-continue:disabled { opacity: 0.4; cursor: not-allowed; }
 
-@media (max-width: 860px) { .cart-grid { grid-template-columns: 1fr; } }
+/* responsive */
+@media (max-width: 900px) {
+  .cart-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  /* Compress stepper: hide labels, just show circles */
+  .step-label { display: none; }
+  .step-circle { width: 30px; height: 30px; font-size: 0.75rem; }
+  .step-line { top: 15px; }
+
+  .order-desc { font-size: 0.82rem; }
+  .btn-continue { width: 100%; justify-content: center; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .card-body { flex-direction: column; gap: 10px; }
+  .card-right { align-items: flex-start; flex-direction: row; gap: 12px; align-items: center; }
+  .stepper { gap: 0; }
+}
 </style>

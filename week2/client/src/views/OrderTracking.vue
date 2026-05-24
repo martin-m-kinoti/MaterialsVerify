@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <app-layout title="Order Tracking">
 
     <!-- Search -->
@@ -204,7 +204,7 @@ export default {
 </script>
 
 <style scoped>
-/* ── SEARCH ── */
+/* search */
 .search-row { display: flex; }
 .search-input {
   width: 55%;
@@ -221,7 +221,7 @@ export default {
 .search-input:focus { border-color: #0f7a55; background: #fff; }
 .search-input::placeholder { color: #bbb; }
 
-/* ── FILTER TABS ── */
+/* filter tabs */
 .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
 .tab {
   padding: 6px 16px;
@@ -238,7 +238,7 @@ export default {
 .tab:hover { border-color: #0f7a55; color: #0f7a55; }
 .tab--active { background: #0f7a55; border-color: #0f7a55; color: #fff; font-weight: 600; }
 
-/* ── TWO-COLUMN LAYOUT ── */
+/* two-column layout */
 .tracking-layout {
   display: grid;
   grid-template-columns: 380px 1fr;
@@ -247,7 +247,7 @@ export default {
   flex: 1;
 }
 
-/* ── ORDER LIST ── */
+/* order list */
 .order-list { display: flex; flex-direction: column; gap: 10px; }
 .order-item {
   background: #fff;
@@ -281,7 +281,7 @@ export default {
 .badge-amber { background: #fff8e6; color: #8a5a00; border: 1px solid #f5d68a; }
 .badge-blue  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 
-/* ── DETAIL COLUMN ── */
+/* detail column */
 .detail-col { display: flex; flex-direction: column; gap: 16px; }
 .detail-empty {
   display: flex;
@@ -295,7 +295,7 @@ export default {
   background: #f8fdfb;
 }
 
-/* ── PANELS ── */
+/* panels */
 .detail-panel {
   background: #fff;
   border: 1.5px solid #e8f0ec;
@@ -427,5 +427,47 @@ export default {
 }
 .btn-send:hover { background: #0a5e40; }
 
-@media (max-width: 1000px) { .tracking-layout { grid-template-columns: 1fr; } }
+/* responsive */
+
+/* Tablet: stack the two columns */
+@media (max-width: 1024px) {
+  .tracking-layout { grid-template-columns: 1fr; }
+  .order-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Search full width */
+  .search-input { width: 100%; }
+
+  /* Filter tabs: horizontal scroll */
+  .filter-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 6px;
+  }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; }
+
+  /* Order list: single column again */
+  .order-list { grid-template-columns: 1fr; }
+
+  /* Detail grid: single column */
+  .detail-grid { grid-template-columns: 1fr; }
+
+  /* Chat height */
+  .chat-messages { max-height: 120px; }
+}
+
+@media (max-width: 480px) {
+  .tracking-layout { gap: 14px; }
+  .detail-panel { padding: 14px 16px; }
+  .chat-input-row { flex-direction: column; }
+  .btn-send { width: 100%; }
+}
 </style>
