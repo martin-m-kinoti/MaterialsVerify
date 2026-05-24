@@ -128,17 +128,25 @@ export default {
       tabs: ['All', 'Delivered', 'Dispatched', 'Approved', 'Pending'],
       selectedOrder: null,
       newMessage: '',
-      orders: [
-        { batch: 'BM-2024-001', material: 'Portland Cement 50kg',   qty: '50 bags',   status: 'Delivered',  statusType: 'green', date: '12 May 2026', supplier: 'Bamburi Cement Ltd',  amount: '37,500', orderNo: 'ORD-0094' },
-        { batch: 'BM-2024-002', material: 'Deformed Steel Bar Y12', qty: '200 pcs',   status: 'Dispatched', statusType: 'blue',  date: '10 May 2026', supplier: 'Steel Makers EA',     amount: '24,000', orderNo: 'ORD-0093' },
-        { batch: 'BM-2024-003', material: 'Roofing Timber 2×4',     qty: '120 pcs',   status: 'Dispatched', statusType: 'blue',  date: '09 May 2026', supplier: 'Kenya Timbers Ltd',   amount: '11,400', orderNo: 'ORD-0092' },
-        { batch: 'BM-2024-004', material: 'Ballast Aggregate 20mm', qty: '5 tonnes',  status: 'Approved',   statusType: 'amber', date: '08 May 2026', supplier: 'Quarry Masters KE',   amount: '8,800',  orderNo: 'ORD-0091' },
-      ],
+      orders: [],
       chatMessages: [
         { from: 'them', text: 'Your order has been confirmed and packed.', time: '09:14' },
         { from: 'me',   text: 'What time will it be dispatched?',           time: '09:22' },
         { from: 'them', text: 'Dispatch is scheduled for 2 PM today.',      time: '09:25' },
       ],
+    }
+  },
+  created() {
+    const stored = JSON.parse(localStorage.getItem('mv_orders') || '[]')
+    const mockOrders = [
+      { batch: 'BM-2024-001', material: 'Portland Cement 50kg',   qty: '50 bags',  status: 'Delivered',  statusType: 'green', date: '12 May 2026', supplier: 'Bamburi Cement Ltd',  amount: '37,500', orderNo: 'ORD-0094' },
+      { batch: 'BM-2024-002', material: 'Deformed Steel Bar Y12', qty: '200 pcs',  status: 'Dispatched', statusType: 'blue',  date: '10 May 2026', supplier: 'Steel Makers EA',     amount: '24,000', orderNo: 'ORD-0093' },
+      { batch: 'BM-2024-003', material: 'Roofing Timber 2×4',     qty: '120 pcs',  status: 'Dispatched', statusType: 'blue',  date: '09 May 2026', supplier: 'Kenya Timbers Ltd',   amount: '11,400', orderNo: 'ORD-0092' },
+      { batch: 'BM-2024-004', material: 'Ballast Aggregate 20mm', qty: '5 tonnes', status: 'Approved',   statusType: 'amber', date: '08 May 2026', supplier: 'Quarry Masters KE',   amount: '8,800',  orderNo: 'ORD-0091' },
+    ]
+    this.orders = stored.concat(mockOrders)
+    if (this.orders.length > 0) {
+      this.selectedOrder = this.orders[0]
     }
   },
   computed: {
