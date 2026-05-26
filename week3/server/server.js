@@ -2,6 +2,7 @@
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
+const User = require('./models/User');
 
 // parse env variables
 require('dotenv').config();
@@ -23,6 +24,24 @@ app.use(express.static(__dirname + '/views/'));
 // Defining route middleware
 app.use('/api', require('./routes/api'));
 
+// Users
+app.post('/api/user', async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(400).json(
+      {
+        error: err.message
+      }
+    )
+  }
+});
+
+app.get('/api/users', async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+})
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
