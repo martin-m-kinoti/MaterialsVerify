@@ -35,6 +35,9 @@
 
       <div class="divider"><span>or sign in with email</span></div>
 
+      <p v-if="error" class="msg-error">{{ error }}</p>
+      <p v-if="success" class="msg-success">{{ success }}</p>
+
       <form class="auth-form" @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="email">Email address</label>
@@ -75,28 +78,62 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: "LoginPage",
   data() {
     return {
       loading: false,
-      form: { email: "", password: "" },
+      error: '',
+      errors: {},
+      success: '',
+      form: { 
+        email: "", 
+        password: "" 
+      },
     };
   },
   methods: {
-    handleLogin() {
+    validate() {
+      const e = {};
+      if (!this.form.email.trim()) {
+        e.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+        e.email = "Invalid email format";
+      }
+      if (!this.form.password.trim()) {
+        e.password = "Password is required";
+      }
+      this.errors = e;
+      return Object.keys(e).length === 0;
+    },
+    
+    async handleLogin() {
+      if (!this.validate()) {
+        return;
+      }
       this.loading = true;
-      // TODO: replace with real API call
-      const prefix = this.form.email.split("@")[0];
-      const name = prefix
-        .split(/[._-]/)
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" ");
-      localStorage.setItem(
-        "mv_user",
-        JSON.stringify({ name, email: this.form.email, role: "Buyer" })
-      );
-      this.$router.push("/dashboard");
+      this.errors = {};
+      this.error = '';
+
+      try {
+        const res = await axios.post('http://localhost:9000/api/auth/login', {
+          email: this.form.email,
+          password: this.form.password,
+        });
+        localStorage.setItem('mv_user', JSON.stringify({
+          email: res.data.email,
+          role: res.data.role,
+        }));
+        this.$router.push("/dashboard");
+          
+      } catch (err) {
+        this.error = (err.response && err.response.data && (err.response.data.message || err.response.data.error))
+          || "Something went wrong. Please try again.";
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };
@@ -314,6 +351,26 @@ input::placeholder {
 }
 .auth-switch a:hover {
   text-decoration: underline;
+}
+
+.msg-error {
+  background: #fff0f0;
+  border: 1px solid #f5c6c6;
+  color: #c0392b;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+}
+
+.msg-success {
+  background: #f0faf5;
+  border: 1px solid #b2dfc9;
+  color: #0f7a55;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 480px) {

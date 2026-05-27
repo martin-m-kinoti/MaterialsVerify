@@ -3,6 +3,7 @@ const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/User');
+const bcrypt = require('bcryptjs');
 
 // parse env variables
 require('dotenv').config();
@@ -37,7 +38,36 @@ app.post('/api/user', async (req, res) => {
     )
   }
 });
+// Retrieve a user by email 
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
 
+  try {
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) { 
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Success - return user
+    res.status(200).json({
+      message: 'Login successful',
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
+// Retrieve all users
 app.get('/api/users', async (req, res) => {
   const users = await User.find();
   res.json(users);
