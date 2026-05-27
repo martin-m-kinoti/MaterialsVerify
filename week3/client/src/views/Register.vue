@@ -98,6 +98,8 @@
             required
           />
         </div>
+        <password-strength :password="form.password" />
+        <span v-if="errors.password" class="field-error">{{ errors.password }}</span>
 
         <div class="form-group">
           <label for="confirmPassword">Confirm password</label>
@@ -112,6 +114,9 @@
             >Passwords do not match</span
           >
         </div>
+
+        <p v-if="error" class="form-error">{{ error }}</p>
+        <p v-if="success" class="form-success">{{ success }}</p>
 
         <button
           type="submit"
@@ -128,14 +133,24 @@
       </p>
     </div>
   </div>
+
 </template>
 
 <script>
+import axios from 'axios';
+import PasswordStrength from '@/components/PasswordStrength.vue';
 export default {
+  components: {
+    PasswordStrength
+  },
+
   name: "RegisterPage",
   data() {
     return {
       loading: false,
+      error: '',
+      errors: {},
+      success: '',
       form: {
         firstName: "",
         lastName: "",
@@ -197,6 +212,16 @@ export default {
     };
   },
   computed: {
+    passwordScore() {
+      const p = this.form.password;
+      let score = 0;
+      if (p.length >= 8) score++;
+      if (/[A-Z]/.test(p)) score++;
+      if (/[0-9]/.test(p)) score++;
+      if (/[^A-Za-z0-9]/.test(p)) score++;
+      return score;
+    },
+
     passwordMismatch() {
       return (
         this.form.confirmPassword.length > 0 &&
@@ -205,12 +230,77 @@ export default {
     },
   },
   methods: {
-    handleRegister() {
-      if (this.passwordMismatch) return;
+    validate() {
+      const e = {};
+
+      // Component validation
+      if (!this.form.firstName.trim()) {
+        e.firstName = "First name is required";
+      }
+
+      if (!this.form.lastName.trim()) {
+        e.lastName = "Last name is required";
+      }
+
+      if (!this.form.email.trim()) {
+        e.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+        e.email = "Invalid email format";
+      }
+
+      if (!this.form.county.trim()) {
+        e.county = "County is required";
+      }
+      if (!this.form.role.trim()) {
+        e.role = "Role is required";
+      }
+
+      // Password validation
+      if (!this.form.password) {
+        e.password = "Password is required";
+      } else if (this.form.password.length < 8) {
+        e.password = "Password must be at least 8 characters long";
+      } else if (this.passwordScore < 3) {
+        e.password = "Password is weak - meet at least 3 of the 4 criteria";
+      }
+
+      if (!this.form.confirmPassword) {
+        e.confirmPassword = "Please confirm your password";
+      } else if (this.form.confirmPassword !== this.form.password) {
+        e.confirmPassword = "Passwords do not match";
+      }
+
+      this.errors = e;
+      return Object.keys(e).length === 0;
+    },
+
+    async handleRegister() {
+      if (!this.validate()) {
+        return;
+      }
       this.loading = true;
-      // TODO: call auth API
-      console.log("Register payload:", this.form);
-      this.$router.push("/login");
+      this.errors = {};
+      this.error = '';
+
+      try {
+        const res = await axios.post('http://localhost:9000/api/user', {
+          firstName: this.form.firstName,
+          lastName: this.form.lastName,
+          email: this.form.email,
+          county: this.form.county,
+          role: this.form.role,
+          password: this.form.password,
+        });
+
+        this.success = res.data.message || "Account created! Redirecting...";
+        setTimeout(() => this.$router.push("/login"), 1500);
+      } catch (err) {
+        this.error = (err.response && err.response.data && err.response.data.message)
+          ? err.response.data.message
+          : "Something went wrong. Please try again.";
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };
@@ -401,6 +491,26 @@ select option {
   font-weight: 500;
 }
 
+.form-error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.form-success {
+  font-size: 0.85rem;
+  color: #0f7a55;
+  background: #f0faf5;
+  border: 1px solid #d8eee5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
 .btn-submit {
   margin-top: 4px;
   padding: 14px;
@@ -447,4 +557,5 @@ select option {
     grid-template-columns: 1fr;
   }
 }
+
 </style>

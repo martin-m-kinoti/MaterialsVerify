@@ -41,7 +41,8 @@ app.post('/api/user', async (req, res) => {
 app.get('/api/users', async (req, res) => {
   const users = await User.find();
   res.json(users);
-})
+});
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
