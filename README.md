@@ -1,4 +1,4 @@
-﻿# MaterialVerify Hub
+﻿# MaterialsVerify Hub
 
 Kenya's construction materials verification and marketplace platform. Buyers, contractors, and suppliers can verify product batches against KEBS standards, purchase from certified suppliers, and flag substandard materials.
 
@@ -9,7 +9,7 @@ Kenya's construction materials verification and marketplace platform. Buyers, co
 | Frontend | Vue.js 2, Vue Router |
 | Backend | Node.js, Express.js |
 | Database | MongoDB, Mongoose |
-| Styling | Scoped CSS (DM Sans + Sora fonts) |
+| Styling | CSS |
 
 ## Project Structure
 
