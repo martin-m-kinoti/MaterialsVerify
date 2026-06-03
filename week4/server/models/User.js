@@ -35,7 +35,7 @@ const userSchema = new Schema(
             match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
         },
         county: {
-            type:String,
+            type: String,
             enum: KENYA_COUNTIES,
         },
         role: {
@@ -47,6 +47,12 @@ const userSchema = new Schema(
             type: String,
             minLength: 8,
         },
+        resetPasswordToken: {
+            type: String,
+        },
+        resetPasswordExpiry: {
+            type: Date,
+        },
     },
     {
         timestamps: true,
@@ -54,11 +60,10 @@ const userSchema = new Schema(
 );
 
 // Password hashing
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next;
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-    next;
 });
 
 // Password comparison at login

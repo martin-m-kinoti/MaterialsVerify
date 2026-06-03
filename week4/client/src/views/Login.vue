@@ -53,7 +53,7 @@
         <div class="form-group">
           <label for="password">
             Password
-            <a href="#" class="forgot-link">Forgot password?</a>
+            <router-link to="/forgot-password" class="forgot-link">Forgot password?</router-link>
           </label>
           <input
             id="password"
@@ -121,7 +121,7 @@ export default {
         const res = await axios.post('http://localhost:9000/api/auth/login', {
           email: this.form.email,
           password: this.form.password,
-        });
+        }, { withCredentials: true });
         localStorage.setItem('mv_user', JSON.stringify({
           email: res.data.email,
           role: res.data.role,

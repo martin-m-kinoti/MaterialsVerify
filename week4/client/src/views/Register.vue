@@ -295,8 +295,8 @@ export default {
         this.success = res.data.message || "Account created! Redirecting...";
         setTimeout(() => this.$router.push("/login"), 1500);
       } catch (err) {
-        this.error = (err.response && err.response.data && err.response.data.message)
-          ? err.response.data.message
+        this.error = (err.response && err.response.data && (err.response.data.error || err.response.data.message))
+          ? (err.response.data.error || err.response.data.message)
           : "Something went wrong. Please try again.";
       } finally {
         this.loading = false;
