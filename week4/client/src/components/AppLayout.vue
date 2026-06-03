@@ -30,6 +30,8 @@
           <span class="user-role">{{ userRole }}</span>
         </div>
       </div>
+
+      <button class="logout-btn" @click="logout">Sign out</button>
     </aside>
 
     <!-- ── MAIN ── -->
@@ -57,6 +59,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'AppLayout',
   props: {
@@ -79,15 +83,31 @@ export default {
       this.sidebarOpen = false
     },
   },
-  created() {
+  async created() {
     const raw = localStorage.getItem('mv_user')
-    if (raw) {
+    if (!raw) {
+      this.$router.replace('/login')
+      return
+    }
+    try {
+      await axios.get('http://localhost:9000/api/auth/session', { withCredentials: true })
       const u = JSON.parse(raw)
       this.userName = u.name || u.email || 'User'
       this.userRole = u.role || 'Member'
-    } else {
+    } catch {
+      localStorage.removeItem('mv_user')
       this.$router.replace('/login')
     }
+  },
+  methods: {
+    async logout() {
+      try {
+        await axios.post('http://localhost:9000/api/auth/logout', {}, { withCredentials: true })
+      } finally {
+        localStorage.removeItem('mv_user')
+        this.$router.push('/login')
+      }
+    },
   },
 }
 </script>
@@ -215,6 +235,22 @@ export default {
   text-overflow: ellipsis;
 }
 .user-role { font-size: 0.72rem; color: rgba(255,255,255,0.55); }
+
+.logout-btn {
+  margin: 0 12px 8px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.logout-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
 /* main */
 .main {
