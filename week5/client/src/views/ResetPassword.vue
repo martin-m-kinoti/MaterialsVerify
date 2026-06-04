@@ -184,7 +184,12 @@ export default {
   gap: 10px;
   margin-bottom: 28px;
 }
-.logo-img { height: 30px; width: auto; }
+.logo-img { 
+  height: 30px; 
+  width: auto; 
+  display: block;
+  border-radius: 50%;
+}
 .logo-text {
   font-family: "Sora", sans-serif;
   font-weight: 700;

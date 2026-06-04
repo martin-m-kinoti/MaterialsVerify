@@ -361,6 +361,7 @@ export default {
   height: 30px;
   width: auto;
   display: block;
+  border-radius: 50%;
 }
 .logo-text {
   font-family: "Sora", sans-serif;
