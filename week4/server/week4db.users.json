@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "6a1f0fd268ed210ca1ac8fd5"
+  },
+  "firstName": "admin",
+  "lastName": "kinoti",
+  "email": "admin@gmail.com",
+  "county": "Meru",
+  "role": "inspector",
+  "password": "$2b$10$9h3KMzN.M0HjDcPbC0hFnOujASdqrNqdI92RQm2qaWuQlb42oOSuq",
+  "createdAt": {
+    "$date": "2026-06-02T17:16:02.534Z"
+  },
+  "updatedAt": {
+    "$date": "2026-06-02T17:16:47.405Z"
+  },
+  "__v": 0,
+  "resetPasswordExpiry": {
+    "$date": "2026-06-02T18:16:47.404Z"
+  },
+  "resetPasswordToken": "2d7824fdea1f663a5f77f2bc338daa95dafb0460cebdb5738bf15643a4f8d2c5"
+},
+{
+  "_id": {
+    "$oid": "6a1f103568ed210ca1ac8fd6"
+  },
+  "firstName": "Martin",
+  "lastName": "Kinoti",
+  "email": "mwendakinoti2000@gmail.com",
+  "county": "Meru",
+  "role": "buyer",
+  "password": "$2b$10$kYxc4jubbF3daihvGfFPd.cWAl0UgyprF0QacOY1cNKdGIXTMj8NG",
+  "createdAt": {
+    "$date": "2026-06-02T17:17:41.671Z"
+  },
+  "updatedAt": {
+    "$date": "2026-06-02T18:14:09.125Z"
+  },
+  "__v": 0
+}]

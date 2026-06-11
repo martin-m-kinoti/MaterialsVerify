@@ -1,0 +1,58 @@
+[{
+  "_id": {
+    "$oid": "6a20aa24d6edcf8a2e42092c"
+  },
+  "firstName": "kinoti",
+  "lastName": "martin",
+  "email": "kinotimartincs095@gmail.com",
+  "role": "buyer",
+  "googleId": "118324591237867344753",
+  "avatar": "https://lh3.googleusercontent.com/a/ACg8ocIB5xHor9Cyn2YUQ1XEhd57ZtubEXeoUu4GjJZ9fI6qLEZM0g=s96-c",
+  "createdAt": {
+    "$date": "2026-06-03T22:26:44.122Z"
+  },
+  "updatedAt": {
+    "$date": "2026-06-03T22:26:44.122Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a20b15e7134089b91d9fc31"
+  },
+  "firstName": "Martin",
+  "lastName": "kinoti",
+  "email": "mwendakinoti2000@gmail.com",
+  "county": "Meru",
+  "role": "supplier",
+  "password": "$2b$10$10KG18BYAlyZAknqwGHBl.t7kMCDzsZY5bZbz4SE05mKiA/CNyvju",
+  "createdAt": {
+    "$date": "2026-06-03T22:57:34.530Z"
+  },
+  "updatedAt": {
+    "$date": "2026-06-03T22:57:56.501Z"
+  },
+  "__v": 0,
+  "avatar": "https://lh3.googleusercontent.com/a/ACg8ocK04lpwlYKqgyxF22khXyq1m_UZac4FqKaeytUCnKemh9ZfIg=s96-c",
+  "googleId": "106388606707278170754"
+},
+{
+  "_id": {
+    "$oid": "6a212bdb5f985b9f1eed72ad"
+  },
+  "firstName": "Raven",
+  "lastName": "Kinoti",
+  "email": "kinotimartin095@gmail.com",
+  "county": "Kiambu",
+  "role": "inspector",
+  "password": "$2b$10$ya.uE1gNgFMM9gu5AQlbnetrbpKh1A6vQ57NXgXlu8QWqmy6IaLh.",
+  "createdAt": {
+    "$date": "2026-06-04T07:40:12.033Z"
+  },
+  "updatedAt": {
+    "$date": "2026-06-04T07:44:56.107Z"
+  },
+  "__v": 0,
+  "avatar": "https://lh3.googleusercontent.com/a/ACg8ocLr566HwFlf0wQta5WQyqsi4IvzAJH7T8midSUC95a2EDNrhA=s96-c",
+  "googleId": "116557941069367612804"
+}]

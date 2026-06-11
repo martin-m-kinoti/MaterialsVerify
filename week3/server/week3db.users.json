@@ -1,0 +1,72 @@
+[{
+  "_id": {
+    "$oid": "6a16243f233235e2775ce2c6"
+  },
+  "firstName": "martin",
+  "lastName": "mwenda",
+  "email": "kinotimartincs095@gmail.com",
+  "county": "Meru",
+  "role": "supplier",
+  "password": "$2b$10$3IBy70R5EsqEHZztHW75iO9juDzSFuAE8XRQn.9LjppQ3vvh1FzES",
+  "createdAt": {
+    "$date": "2026-05-26T22:52:47.395Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-26T22:52:47.395Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a16ca030fde14b611487f7c"
+  },
+  "firstName": "gabby",
+  "lastName": "kendi",
+  "email": "gabkendi@yahoo.com",
+  "county": "Nairobi",
+  "role": "buyer",
+  "password": "$2b$10$eXDVfuHxbgjvv6CjC8ZpvumVFGbe3fJAFmHZmY3dmpfG46gxD7rce",
+  "createdAt": {
+    "$date": "2026-05-27T10:40:03.800Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-27T10:40:03.800Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a16ce7d0fde14b611487f7d"
+  },
+  "firstName": "martin",
+  "lastName": "kinoti",
+  "email": "kmart@gmail.com",
+  "county": "Kirinyaga",
+  "role": "buyer",
+  "password": "$2b$10$1mbXWHaPaxx/H1ZJoW7oJu46nIpMw2Q.SAORiq/.zTAYtmj9Rnal6",
+  "createdAt": {
+    "$date": "2026-05-27T10:59:09.543Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-27T10:59:09.543Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6a17476271ae8b2c232723ce"
+  },
+  "firstName": "admin",
+  "lastName": "kinoti",
+  "email": "admin@gmail.com",
+  "county": "Meru",
+  "role": "buyer",
+  "password": "$2b$10$axevH.06J4jBJH4FRbzuTuLp/NVoU699XLpGXX5zaLZtvDWp3/5s6",
+  "createdAt": {
+    "$date": "2026-05-27T19:34:58.637Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-27T19:34:58.637Z"
+  },
+  "__v": 0
+}]
