@@ -1,0 +1,5 @@
+_id,firstName,lastName,email,county,role,password,createdAt,updatedAt,__v
+6a16243f233235e2775ce2c6,martin,mwenda,kinotimartincs095@gmail.com,Meru,supplier,$2b$10$3IBy70R5EsqEHZztHW75iO9juDzSFuAE8XRQn.9LjppQ3vvh1FzES,2026-05-26T22:52:47.395Z,2026-05-26T22:52:47.395Z,0
+6a16ca030fde14b611487f7c,gabby,kendi,gabkendi@yahoo.com,Nairobi,buyer,$2b$10$eXDVfuHxbgjvv6CjC8ZpvumVFGbe3fJAFmHZmY3dmpfG46gxD7rce,2026-05-27T10:40:03.800Z,2026-05-27T10:40:03.800Z,0
+6a16ce7d0fde14b611487f7d,martin,kinoti,kmart@gmail.com,Kirinyaga,buyer,$2b$10$1mbXWHaPaxx/H1ZJoW7oJu46nIpMw2Q.SAORiq/.zTAYtmj9Rnal6,2026-05-27T10:59:09.543Z,2026-05-27T10:59:09.543Z,0
+6a17476271ae8b2c232723ce,admin,kinoti,admin@gmail.com,Meru,buyer,$2b$10$axevH.06J4jBJH4FRbzuTuLp/NVoU699XLpGXX5zaLZtvDWp3/5s6,2026-05-27T19:34:58.637Z,2026-05-27T19:34:58.637Z,0

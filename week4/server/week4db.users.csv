@@ -1,0 +1,3 @@
+_id,firstName,lastName,email,county,role,password,createdAt,updatedAt,__v,resetPasswordExpiry,resetPasswordToken
+6a1f0fd268ed210ca1ac8fd5,admin,kinoti,admin@gmail.com,Meru,inspector,$2b$10$9h3KMzN.M0HjDcPbC0hFnOujASdqrNqdI92RQm2qaWuQlb42oOSuq,2026-06-02T17:16:02.534Z,2026-06-02T17:16:47.405Z,0,2026-06-02T18:16:47.404Z,2d7824fdea1f663a5f77f2bc338daa95dafb0460cebdb5738bf15643a4f8d2c5
+6a1f103568ed210ca1ac8fd6,Martin,Kinoti,mwendakinoti2000@gmail.com,Meru,buyer,$2b$10$kYxc4jubbF3daihvGfFPd.cWAl0UgyprF0QacOY1cNKdGIXTMj8NG,2026-06-02T17:17:41.671Z,2026-06-02T18:14:09.125Z,0,,
