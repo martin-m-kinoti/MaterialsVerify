@@ -1,6 +1,18 @@
 ﻿<template>
   <app-layout title="Dashboard">
 
+    <!-- Admin portal banner (admin role only) -->
+    <div v-if="userRole === 'admin'" class="admin-banner">
+      <div class="admin-banner-left">
+        <span class="admin-banner-icon">⚙</span>
+        <div>
+          <p class="admin-banner-title">Admin Portal</p>
+          <p class="admin-banner-sub">Manage users, roles, and platform access.</p>
+        </div>
+      </div>
+      <router-link to="/admin/users" class="admin-banner-btn">Open User Management →</router-link>
+    </div>
+
     <!-- Search bar -->
     <div class="search-wrap">
       <input type="text" class="search-input" placeholder="Search materials, orders, suppliers…" />
@@ -75,6 +87,7 @@ export default {
   components: { AppLayout },
   data() {
     return {
+      userRole: '',
       statCards: [
         { label: 'Materials Verified',   value: '14,500+', sub: 'Total on platform',      color: 'val-green'   },
         { label: 'Active Orders',         value: '24',      sub: '3 awaiting delivery',    color: 'val-default' },
@@ -90,10 +103,64 @@ export default {
       ],
     }
   },
+  created() {
+    try {
+      const raw = localStorage.getItem('mv_user');
+      if (raw) this.userRole = JSON.parse(raw).role || '';
+    } catch (e) { /* ignore */ }
+  },
 }
 </script>
 
 <style scoped>
+/* admin banner */
+.admin-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #0f2419 0%, #0f7a55 100%);
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+.admin-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.admin-banner-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+.admin-banner-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+.admin-banner-sub {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 2px;
+}
+.admin-banner-btn {
+  display: inline-block;
+  padding: 9px 20px;
+  background: #fff;
+  color: #0f7a55;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.admin-banner-btn:hover { background: #e6f7f1; }
+
 /* search */
 .search-input {
   width: 55%;

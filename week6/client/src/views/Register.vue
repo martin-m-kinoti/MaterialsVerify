@@ -90,29 +90,39 @@
 
         <div class="form-group">
           <label for="password">Enter your password</label>
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            placeholder="Min 8 characters"
-            required
-          />
+          <div class="pw-wrap">
+            <input
+              id="password"
+              v-model="form.password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Min 8 characters"
+              required
+            />
+            <button type="button" class="pw-toggle" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Hide password' : 'Show password'">
+              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
         <password-strength :password="form.password" />
         <span v-if="errors.password" class="field-error">{{ errors.password }}</span>
 
         <div class="form-group">
           <label for="confirmPassword">Confirm password</label>
-          <input
-            id="confirmPassword"
-            v-model="form.confirmPassword"
-            type="password"
-            placeholder="Re-enter your password"
-            required
-          />
-          <span v-if="passwordMismatch" class="field-error"
-            >Passwords do not match</span
-          >
+          <div class="pw-wrap">
+            <input
+              id="confirmPassword"
+              v-model="form.confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Re-enter your password"
+              required
+            />
+            <button type="button" class="pw-toggle" @click="showConfirmPassword = !showConfirmPassword" :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'">
+              <svg v-if="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+          <span v-if="passwordMismatch" class="field-error">Passwords do not match</span>
         </div>
 
         <p v-if="error" class="form-error">{{ error }}</p>
@@ -160,6 +170,8 @@ export default {
         password: "",
         confirmPassword: "",
       },
+      showPassword: false,
+      showConfirmPassword: false,
       counties: [
         "Baringo",
         "Bomet",
@@ -458,6 +470,29 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+.pw-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pw-wrap input {
+  flex: 1;
+  padding-right: 46px;
+}
+.pw-toggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+}
+.pw-toggle:hover { color: #0f7a55; }
+
 input,
 select {
   padding: 13px 16px;
@@ -468,6 +503,7 @@ select {
   font-family: "DM Sans", sans-serif;
   color: #1a1a1a;
   outline: none;
+  width: 100%;
   transition: border-color 0.2s, background 0.2s;
   appearance: none;
   -webkit-appearance: none;

@@ -22,6 +22,7 @@
         <router-link to="/materials"      class="nav-item" active-class="nav-item--active">Materials</router-link>
         <router-link to="/orders"         class="nav-item" active-class="nav-item--active">Orders</router-link>
         <router-link to="/order-tracking" class="nav-item" active-class="nav-item--active">Order Tracking</router-link>
+        <router-link v-if="userRole === 'admin'" to="/admin/users" class="nav-item nav-item--admin" active-class="nav-item--active">Users</router-link>
       </nav>
 
       <div class="sidebar-user">
@@ -242,6 +243,7 @@ export default {
 }
 .nav-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
 .nav-item--active { background: rgba(255,255,255,0.2); color: #fff; font-weight: 600; }
+.nav-item--admin { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 14px; }
 
 .sidebar-user {
   display: flex;

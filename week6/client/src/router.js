@@ -10,6 +10,7 @@ import OrderTracking  from "./views/OrderTracking.vue";
 import ForgotPassword from "./views/ForgotPassword.vue";
 import ResetPassword  from "./views/ResetPassword.vue";
 import GoogleCallback from "./views/GoogleCallback.vue";
+import AdminUsers     from "./views/AdminUsers.vue";
 
 Vue.use(Router);
 
@@ -27,15 +28,20 @@ const router = new Router({
     { path: "/forgot-password",         name: "ForgotPassword",  component: ForgotPassword  },
     { path: "/reset-password/:token",   name: "ResetPassword",   component: ResetPassword   },
     { path: "/auth/google/callback",    name: "GoogleCallback",  component: GoogleCallback  },
+    { path: "/admin/users",             name: "AdminUsers",      component: AdminUsers,     meta: { requiresAuth: true, requiresAdmin: true } },
   ],
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !localStorage.getItem('mv_user')) {
-    next('/login');
-  } else {
-    next();
+  const raw = localStorage.getItem('mv_user');
+  if (to.meta.requiresAuth && !raw) {
+    return next('/login');
   }
+  if (to.meta.requiresAdmin) {
+    const user = raw ? JSON.parse(raw) : null;
+    if (!user || user.role !== 'admin') return next('/dashboard');
+  }
+  next();
 });
 
 export default router;

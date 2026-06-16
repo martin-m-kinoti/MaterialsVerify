@@ -286,11 +286,147 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// ── Admin middleware ──────────────────────────────────────────────────────────
+function requireAdmin(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+  if (req.session.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  next();
+}
+
+// List users (search + role filter)
+app.get('/api/admin/users', requireAdmin, async (req, res) => {
+  try {
+    const { search, role } = req.query;
+    const filter = {};
+    if (role) filter.role = role;
+    if (search) {
+      filter.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName:  { $regex: search, $options: 'i' } },
+        { email:     { $regex: search, $options: 'i' } },
+      ];
+    }
+    const users = await User.find(filter)
+      .select('-password -resetPasswordToken -resetPasswordExpiry')
+      .sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get single user
+app.get('/api/admin/users/:id', requireAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select('-password -resetPasswordToken -resetPasswordExpiry');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Create user
+app.post('/api/admin/users', requireAdmin, async (req, res) => {
+  const { firstName, lastName, email, county, role, password } = req.body;
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ message: 'firstName, lastName, email and password are required' });
+  }
+  try {
+    const existing = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existing) return res.status(409).json({ message: 'Email already registered' });
+    const user = await User.create({
+      firstName: firstName.trim(),
+      lastName:  lastName.trim(),
+      email:     email.toLowerCase().trim(),
+      county:    county?.trim() || undefined,
+      role:      role || 'buyer',
+      password,
+    });
+    res.status(201).json({
+      _id:       user._id,
+      firstName: user.firstName,
+      lastName:  user.lastName,
+      email:     user.email,
+      role:      user.role,
+      county:    user.county,
+      createdAt: user.createdAt,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update user
+app.put('/api/admin/users/:id', requireAdmin, async (req, res) => {
+  const { firstName, lastName, email, county, role, password } = req.body;
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (firstName) user.firstName = firstName.trim();
+    if (lastName)  user.lastName  = lastName.trim();
+    if (email)     user.email     = email.toLowerCase().trim();
+    if (county)    user.county    = county.trim();
+    if (role)      user.role      = role;
+    if (password)  user.password  = password; // pre-save hook hashes it
+    await user.save();
+    res.json({
+      _id:       user._id,
+      firstName: user.firstName,
+      lastName:  user.lastName,
+      email:     user.email,
+      role:      user.role,
+      county:    user.county,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete user
+app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
+  try {
+    if (req.params.id === req.session.userId.toString()) {
+      return res.status(400).json({ message: 'Cannot delete your own account' });
+    }
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Creates the bootstrap admin account from .env if no admin exists yet
+async function seedAdmin() {
+  const email    = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) return;
+
+  const existing = await User.findOne({ role: 'admin' });
+  if (existing) return;
+
+  await User.create({
+    firstName: 'Admin',
+    lastName:  'User',
+    email:     email.toLowerCase(),
+    password,
+    role:      'admin',
+  });
+  console.log(`Bootstrap admin created: ${email}`);
+}
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log('Connected to MongoDB');
+    await seedAdmin();
     // Listening to port
     app.listen(port, () => {
       console.log(`Listening On http://localhost:${port}/api`);
