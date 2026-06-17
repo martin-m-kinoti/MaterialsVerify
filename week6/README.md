@@ -1,5 +1,10 @@
 # MAT Verification Hub — Week 6
 
+## Pre-requisite
+[`CRUD Operations`](https://github.com/martin-m-kinoti/BIT3208-Week6-CRUD)
+
+---
+
 ## Overview
 
 A MEVN (MongoDB, Express, Vue 3, Node.js) application for managing and verifying construction materials. Week 6 adds a full Admin User Management portal with complete CRUD operations backed by MongoDB Atlas.
