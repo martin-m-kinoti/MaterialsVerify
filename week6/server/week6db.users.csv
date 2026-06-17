@@ -1,0 +1,4 @@
+_id,firstName,lastName,email,role,password,createdAt,updatedAt,__v,googleId,avatar,county
+6a31996a0727516ef70ba688,Admin,User,admin@materialsverify.co.ke,admin,$2b$10$/xs2xAS4zhGGX/nqfhB7IOxqeglDCY5XqF1EuspdrBhHhj5ifyDvK,2026-06-16T18:43:54.242Z,2026-06-16T18:43:54.242Z,0,,,
+6a319ab7bb8994b15be30a52,Martin,kinoti,mwendakinoti2000@gmail.com,buyer,,2026-06-16T18:49:27.646Z,2026-06-16T18:50:17.849Z,0,106388606707278170754,https://lh3.googleusercontent.com/a/ACg8ocK04lpwlYKqgyxF22khXyq1m_UZac4FqKaeytUCnKemh9ZfIg=s96-c,Meru
+6a319cd9bb8994b15be30a53,James,Orengo,orengojames@gmail.com,supplier,$2b$10$L01g8SBS414obWERAu9jk.7FkIDwfySbwlYzVAOzGoBa0zmGFXsd6,2026-06-16T18:58:33.862Z,2026-06-16T18:58:33.862Z,0,,,Siaya
