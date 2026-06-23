@@ -1,0 +1,3 @@
+_id,firstName,lastName,email,role,password,createdAt,updatedAt,__v,county
+6a3975c38b1f026b6eb6b96a,Admin,User,admin@materialsverify.co.ke,admin,$2b$10$89HenQyIBbB9iDsKHsx1weYEGQjs1jCRfxOD.1GjTPC2YDBH1CF32,2026-06-22T17:49:55.880Z,2026-06-22T17:49:55.880Z,0,
+6a3a7bc7c337ced2485f0c99,Mwenda,Kinoti,mwendakinoti026@gmail.com,buyer,$2b$10$UfwTrXfkDeCetpdEtuvxmuDi5EBpUqCypX6zw1ptUNS4BgGTIVrmC,2026-06-23T12:27:51.405Z,2026-06-23T12:27:51.405Z,0,Kiambu
