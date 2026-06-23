@@ -1,4 +1,4 @@
-# MAT Verification Hub — Week 6
+# Week 6: CRUD Operations
 
 ## Pre-requisite
 [`BIT3208-Week6-CRUD`](https://github.com/martin-m-kinoti/BIT3208-Week6-CRUD)
