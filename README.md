@@ -13,23 +13,49 @@ Kenya's construction materials verification and marketplace platform. Buyers, co
 
 ## Project Structure
 
+The project is organized into weekly iteration snapshots, each building on the previous. The latest iteration is `week7/`.
+
 ```
 mat-verification-hub/
-├── client/               # Vue.js frontend
-│   └── src/
-│       ├── views/
-│       │   ├── LandingPage.vue
-│       │   ├── Login.vue
-│       │   └── Register.vue
-│       ├── router.js
-│       ├── App.vue
-│       └── main.js
-└── server/               # Express.js backend
-    ├── models/
-    │   └── User.js       # Mongoose user schema
-    ├── routes/
-    │   └── api.js
-    └── server.js
+├── week1/                # Initial MEVN scaffold
+├── week2/                # Views: Dashboard, Materials, Orders, OrderTracking
+├── week3/                # Auth: User model, password strength component
+├── week4/                # Password reset flow (ForgotPassword, ResetPassword, email utils)
+├── week5/                # Google OAuth callback view
+├── week6/                # Admin: AdminUsers view, user management routes
+└── week7/                # Current iteration
+    ├── client/                   # Vue.js 2 frontend
+    │   ├── public/               # Static assets (images, index.html)
+    │   └── src/
+    │       ├── assets/
+    │       ├── components/
+    │       │   ├── AppLayout.vue
+    │       │   └── PasswordStrength.vue
+    │       ├── views/
+    │       │   ├── LandingPage.vue
+    │       │   ├── Login.vue
+    │       │   ├── Register.vue
+    │       │   ├── Dashboard.vue
+    │       │   ├── Materials.vue
+    │       │   ├── Orders.vue
+    │       │   ├── OrderTracking.vue
+    │       │   ├── ForgotPassword.vue
+    │       │   ├── ResetPassword.vue
+    │       │   ├── GoogleCallback.vue
+    │       │   └── AdminUsers.vue
+    │       ├── router.js
+    │       ├── App.vue
+    │       └── main.js
+    ├── server/                   # Express.js backend
+    │   ├── models/
+    │   │   └── User.js           # Mongoose user schema
+    │   ├── routes/
+    │   │   └── api.js
+    │   ├── utils/
+    │   │   ├── sendMail.js       # Nodemailer email helper
+    │   │   └── validate.js       # Input validation helpers
+    │   └── server.js
+    └── screenshots/              # Feature screenshots
 ```
 
 ## Getting Started
