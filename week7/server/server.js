@@ -26,7 +26,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Sessions — must be before route definitions
+// Sessions
 app.use(session({
   secret:     process.env.SESSION_SECRET,
   resave:     false,
@@ -34,7 +34,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false,
-    maxAge: 1000*60*60*24*7 // 7 days in milliseconds
+    maxAge: 1000*60*60*24*7 // 7 days
   }
 }));
 
