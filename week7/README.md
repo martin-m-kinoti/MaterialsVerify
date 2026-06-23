@@ -1,4 +1,4 @@
-# Week 7 — Authentication & Session Management
+# Week 7: Authentication & Session Management
 
 ## Pre-requisite
 [BIT3208-Week7-Authentication](https://github.com/martin-m-kinoti/BIT3208-Week7-Authentication)
