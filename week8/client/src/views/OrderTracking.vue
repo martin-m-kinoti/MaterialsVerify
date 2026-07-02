@@ -79,16 +79,20 @@
 
         <!-- Supplier chat -->
         <div class="detail-panel chat-panel">
-          <h3 class="panel-title">Supplier Chat</h3>
+          <div class="chat-panel-header">
+            <h3 class="panel-title" style="margin-bottom:0">marTex Hardware Chat</h3>
+            <router-link to="/chat" class="chat-open-link">Open full chat →</router-link>
+          </div>
           <div class="chat-messages" ref="chatBox">
+            <div v-if="!chatMessages.length" class="chat-empty">No messages yet. Say hello!</div>
             <div
               class="chat-msg"
               v-for="(msg, i) in chatMessages"
               :key="i"
-              :class="msg.from === 'me' ? 'msg-me' : 'msg-them'"
+              :class="msg.sender === 'client' ? 'msg-me' : 'msg-them'"
             >
               <span class="msg-bubble">{{ msg.text }}</span>
-              <span class="msg-time">{{ msg.time }}</span>
+              <span class="msg-time">{{ formatMsgTime(msg.createdAt) }}</span>
             </div>
           </div>
           <div class="chat-input-row">
@@ -96,10 +100,10 @@
               v-model="newMessage"
               type="text"
               class="chat-input"
-              placeholder="Send a message…"
+              placeholder="Send a message to marTex…"
               @keyup.enter="sendMessage"
             />
-            <button class="btn-send" @click="sendMessage">Send</button>
+            <button class="btn-send" @click="sendMessage" :disabled="sendingMsg">Send</button>
           </div>
         </div>
 
@@ -117,6 +121,9 @@
 
 <script>
 import AppLayout from '@/components/AppLayout.vue'
+import axios from 'axios'
+
+const API = 'http://localhost:9000'
 
 export default {
   name: 'OrderTracking',
@@ -125,29 +132,22 @@ export default {
     return {
       search: '',
       activeTab: 'All',
-      tabs: ['All', 'Delivered', 'Dispatched', 'Approved', 'Pending'],
+      tabs: ['All', 'Delivered', 'Dispatched', 'In Transit', 'Approved', 'Pending'],
       selectedOrder: null,
       newMessage: '',
+      sendingMsg: false,
       orders: [],
-      chatMessages: [
-        { from: 'them', text: 'Your order has been confirmed and packed.', time: '09:14' },
-        { from: 'me',   text: 'What time will it be dispatched?',           time: '09:22' },
-        { from: 'them', text: 'Dispatch is scheduled for 2 PM today.',      time: '09:25' },
-      ],
+      chatMessages: [],
+      chatPollTimer: null,
     }
   },
-  created() {
-    const stored = JSON.parse(localStorage.getItem('mv_orders') || '[]')
-    const mockOrders = [
-      { batch: 'BM-2024-001', material: 'Portland Cement 50kg',   qty: '50 bags',  status: 'Delivered',  statusType: 'green', date: '12 May 2026', supplier: 'Bamburi Cement Ltd',  amount: '37,500', orderNo: 'ORD-0094' },
-      { batch: 'BM-2024-002', material: 'Deformed Steel Bar Y12', qty: '200 pcs',  status: 'Dispatched', statusType: 'blue',  date: '10 May 2026', supplier: 'Steel Makers EA',     amount: '24,000', orderNo: 'ORD-0093' },
-      { batch: 'BM-2024-003', material: 'Roofing Timber 2×4',     qty: '120 pcs',  status: 'Dispatched', statusType: 'blue',  date: '09 May 2026', supplier: 'Kenya Timbers Ltd',   amount: '11,400', orderNo: 'ORD-0092' },
-      { batch: 'BM-2024-004', material: 'Ballast Aggregate 20mm', qty: '5 tonnes', status: 'Approved',   statusType: 'amber', date: '08 May 2026', supplier: 'Quarry Masters KE',   amount: '8,800',  orderNo: 'ORD-0091' },
-    ]
-    this.orders = stored.concat(mockOrders)
-    if (this.orders.length > 0) {
-      this.selectedOrder = this.orders[0]
-    }
+  async created() {
+    await this.fetchOrders()
+    await this.fetchChat()
+    this.chatPollTimer = setInterval(() => this.fetchChat(), 4000)
+  },
+  beforeDestroy() {
+    clearInterval(this.chatPollTimer)
   },
   computed: {
     filteredOrders() {
@@ -192,20 +192,42 @@ export default {
     },
   },
   methods: {
-    sendMessage() {
+    async fetchOrders() {
+      try {
+        const { data } = await axios.get(API + '/api/orders/my', { withCredentials: true })
+        this.orders = data
+        if (this.orders.length && !this.selectedOrder) this.selectedOrder = this.orders[0]
+      } catch (e) { /* ignore */ }
+    },
+    async fetchChat() {
+      try {
+        const { data } = await axios.get(API + '/api/chat', { withCredentials: true })
+        this.chatMessages = data
+        this.$nextTick(() => {
+          const box = this.$refs.chatBox
+          if (box) box.scrollTop = box.scrollHeight
+        })
+      } catch (e) { /* ignore */ }
+    },
+    async sendMessage() {
       const text = this.newMessage.trim()
-      if (!text) return
-      const now = new Date()
-      this.chatMessages.push({
-        from: 'me',
-        text,
-        time: now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'),
-      })
+      if (!text || this.sendingMsg) return
+      this.sendingMsg = true
       this.newMessage = ''
-      this.$nextTick(() => {
-        const box = this.$refs.chatBox
-        if (box) box.scrollTop = box.scrollHeight
-      })
+      try {
+        const { data } = await axios.post(API + '/api/chat', { text }, { withCredentials: true })
+        this.chatMessages.push(data)
+        this.$nextTick(() => {
+          const box = this.$refs.chatBox
+          if (box) box.scrollTop = box.scrollHeight
+        })
+      } catch (e) { /* ignore */ }
+      this.sendingMsg = false
+    },
+    formatMsgTime(iso) {
+      if (!iso) return ''
+      const d = new Date(iso)
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0')
     },
   },
 }
@@ -381,7 +403,10 @@ export default {
 
 /* Chat */
 .chat-panel { display: flex; flex-direction: column; gap: 12px; }
-.chat-panel .panel-title { margin-bottom: 0; }
+.chat-panel-header { display: flex; align-items: center; justify-content: space-between; }
+.chat-open-link { font-size: 0.78rem; font-weight: 600; color: #0f7a55; text-decoration: none; }
+.chat-open-link:hover { text-decoration: underline; }
+.chat-empty { font-size: 0.82rem; color: #bbb; padding: 8px 0; }
 .chat-messages {
   display: flex;
   flex-direction: column;

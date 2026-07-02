@@ -1,5 +1,5 @@
 <template>
-  <app-layout title="User Management">
+  <admin-layout title="User Management">
 
     <!-- Toolbar -->
     <div class="toolbar">
@@ -151,12 +151,12 @@
       </div>
     </transition>
 
-  </app-layout>
+  </admin-layout>
 </template>
 
 <script>
 import axios from 'axios';
-import AppLayout from '../components/AppLayout.vue';
+import AdminLayout from '../components/AdminLayout.vue';
 
 const API = 'http://localhost:9000';
 
@@ -173,7 +173,7 @@ const KENYA_COUNTIES = [
 
 export default {
   name: 'AdminUsers',
-  components: { AppLayout },
+  components: { AdminLayout },
   data() {
     return {
       users: [],

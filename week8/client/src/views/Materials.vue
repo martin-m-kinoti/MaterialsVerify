@@ -1,6 +1,18 @@
 ﻿<template>
   <app-layout title="Materials Catalogue">
 
+    <!-- marTex supplier banner -->
+    <div class="supplier-banner">
+      <div class="sb-left">
+        <div class="sb-icon">🏗</div>
+        <div>
+          <p class="sb-name">marTex Hardware</p>
+          <p class="sb-sub">Verified supplier · All materials KEBS certified · Kiambu, Kenya</p>
+        </div>
+      </div>
+      <router-link to="/chat" class="sb-chat">Chat with marTex →</router-link>
+    </div>
+
     <!-- Search + filters -->
     <div class="search-row">
       <input v-model="search" type="text" class="search-input" placeholder="Search materials…" />
@@ -58,12 +70,14 @@ export default {
       categories: ['All', 'Cement', 'Steel', 'Timber', 'Aggregates', 'Masonry'],
       statuses: ['All', 'Verified', 'Pending', 'Flagged'],
       materials: [
-        { id: 1, name: 'Bamburi Portland Cement 50kg', category: 'Cement',     supplier: 'Bamburi Cement Ltd',  price: '750',   status: 'Verified', statusType: 'green', batch: 'KE-2024-CMT-00482' },
-        { id: 2, name: 'Deformed Steel Bar Y12',       category: 'Steel',      supplier: 'Steel Makers EA',     price: '1,200', status: 'Verified', statusType: 'green', batch: 'KE-2024-STL-00203' },
-        { id: 3, name: 'Roofing Timber 2×4 Treated',  category: 'Timber',     supplier: 'Kenya Timbers Ltd',   price: '380',   status: 'Verified', statusType: 'green', batch: 'KE-2024-TMB-00091' },
-        { id: 4, name: 'Ballast Aggregate 20mm',       category: 'Aggregates', supplier: 'Quarry Masters KE',   price: '220',   status: 'Pending',  statusType: 'amber', batch: 'KE-2024-AGG-00054' },
-        { id: 5, name: 'Hollow Clay Bricks (100pcs)',  category: 'Masonry',    supplier: 'Brick Works KE',      price: '4,500', status: 'Verified', statusType: 'green', batch: 'KE-2024-MSN-00177' },
-        { id: 6, name: 'Mild Steel Pipe 1.5"',         category: 'Steel',      supplier: 'Steel Makers EA',     price: '890',   status: 'Flagged',  statusType: 'red',   batch: 'KE-2024-STL-00198' },
+        { id: 1, name: 'Bamburi Portland Cement 50kg', category: 'Cement',     supplier: 'marTex Hardware', price: '750',   status: 'Verified', statusType: 'green', batch: 'MTX-2024-CMT-00482' },
+        { id: 2, name: 'Deformed Steel Bar Y12',       category: 'Steel',      supplier: 'marTex Hardware', price: '1,200', status: 'Verified', statusType: 'green', batch: 'MTX-2024-STL-00203' },
+        { id: 3, name: 'Roofing Timber 2×4 Treated',  category: 'Timber',     supplier: 'marTex Hardware', price: '380',   status: 'Verified', statusType: 'green', batch: 'MTX-2024-TMB-00091' },
+        { id: 4, name: 'Ballast Aggregate 20mm',       category: 'Aggregates', supplier: 'marTex Hardware', price: '220',   status: 'Verified', statusType: 'green', batch: 'MTX-2024-AGG-00054' },
+        { id: 5, name: 'Hollow Clay Bricks (100pcs)',  category: 'Masonry',    supplier: 'marTex Hardware', price: '4,500', status: 'Verified', statusType: 'green', batch: 'MTX-2024-MSN-00177' },
+        { id: 6, name: 'Mild Steel Pipe 1.5"',         category: 'Steel',      supplier: 'marTex Hardware', price: '890',   status: 'Verified', statusType: 'green', batch: 'MTX-2024-STL-00198' },
+        { id: 7, name: 'River Sand (1 tonne)',         category: 'Aggregates', supplier: 'marTex Hardware', price: '1,800', status: 'Verified', statusType: 'green', batch: 'MTX-2024-AGG-00071' },
+        { id: 8, name: 'Wire Mesh 2×1m (6mm)',        category: 'Steel',      supplier: 'marTex Hardware', price: '650',   status: 'Verified', statusType: 'green', batch: 'MTX-2024-STL-00224' },
       ],
       dismissed: [],
     }
@@ -97,6 +111,42 @@ export default {
 </script>
 
 <style scoped>
+/* supplier banner */
+.supplier-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #0f2419 0%, #0f7a55 100%);
+  border-radius: 14px;
+  flex-wrap: wrap;
+}
+.sb-left { display: flex; align-items: center; gap: 12px; }
+.sb-icon { font-size: 1.5rem; line-height: 1; }
+.sb-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+}
+.sb-sub { font-size: 0.76rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.sb-chat {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #fff;
+  color: #0f7a55;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.sb-chat:hover { background: #e6f7f1; }
+
 /* search & filters */
 .search-row { display: flex; }
 .search-input {

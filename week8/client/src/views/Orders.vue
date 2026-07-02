@@ -289,6 +289,9 @@
 
 <script>
 import AppLayout from '@/components/AppLayout.vue'
+import axios from 'axios'
+
+const API = 'http://localhost:9000'
 
 export default {
   name: 'OrdersPage',
@@ -368,40 +371,36 @@ export default {
     nextStep() {
       if (this.currentStep < this.steps.length - 1) this.currentStep++
     },
-    placeOrder() {
+    async placeOrder() {
       const ts = Date.now()
       const orderId  = 'ORD-' + String(ts).slice(-6)
-      const batchId  = 'BM-'  + String(ts).slice(-9)
+      const batchId  = 'MTX-' + String(ts).slice(-9)
       const total    = this.orderTotal
       const matNames = this.cart.map(function(i) { return i.name }).join(', ')
       const qtyStr   = this.cart.map(function(i) { return i.qty + ' unit(s)' }).join(', ')
       const dateStr  = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
-      const order = {
-        id: '#' + orderId,
-        orderNo: orderId,
-        batch: batchId,
+      const payload = {
+        orderNo:  orderId,
+        batch:    batchId,
         material: matNames.length > 60 ? matNames.slice(0, 57) + '…' : matNames,
-        qty: qtyStr,
-        status: 'Approved',
-        statusType: 'amber',
-        date: dateStr,
-        supplier: this.cart.length === 1 ? this.cart[0].supplier : 'Multiple suppliers',
-        amount: total,
+        qty:      qtyStr,
+        amount:   total,
+        date:     dateStr,
         delivery: Object.assign({}, this.delivery),
-        items: this.cart.map(function(item) {
-          return Object.assign({}, item)
-        }),
+        items:    this.cart.map(function(item) { return Object.assign({}, item) }),
       }
 
-      const existing = JSON.parse(localStorage.getItem('mv_orders') || '[]')
-      existing.unshift(order)
-      localStorage.setItem('mv_orders', JSON.stringify(existing))
-      localStorage.removeItem('mv_cart')
-
-      this.placedOrderId = '#' + orderId
-      this.placedTotal   = total
-      this.currentStep   = 4
+      try {
+        const { data } = await axios.post(API + '/api/orders', payload, { withCredentials: true })
+        localStorage.removeItem('mv_cart')
+        this.placedOrderId = '#' + (data.orderNo || orderId)
+        this.placedTotal   = total
+        this.currentStep   = 4
+      } catch (err) {
+        const msg = (err.response && err.response.data && err.response.data.error) ? err.response.data.error : err.message
+        alert('Failed to place order: ' + msg)
+      }
     },
     startNewOrder() {
       this.cart = []

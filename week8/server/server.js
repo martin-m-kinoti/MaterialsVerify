@@ -7,7 +7,9 @@ const session = require('express-session');
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
-const User = require('./models/User');
+const User    = require('./models/User');
+const Order   = require('./models/Order');
+const Message = require('./models/Message');
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -397,6 +399,158 @@ app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Auth middleware (reusable) ─────────────────────────────────────────────────
+function requireAuth(req, res, next) {
+  if (!req.session.userId) return res.status(401).json({ message: 'Not authenticated' });
+  next();
+}
+
+// ── Orders ────────────────────────────────────────────────────────────────────
+
+// Place a new order
+app.post('/api/orders', requireAuth, async (req, res) => {
+  try {
+    const { orderNo, batch, material, qty, items, amount, delivery, date } = req.body;
+    const order = await Order.create({
+      userId: req.session.userId,
+      orderNo,
+      batch,
+      material,
+      qty,
+      items,
+      amount,
+      delivery,
+      date,
+      status: 'Pending',
+      statusType: 'amber',
+    });
+    res.status(201).json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get current user's orders
+app.get('/api/orders/my', requireAuth, async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.session.userId }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: get all orders
+app.get('/api/admin/orders', requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.query;
+    const filter = status ? { status } : {};
+    const orders = await Order.find(filter)
+      .populate('userId', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: update order status
+app.patch('/api/admin/orders/:id/status', requireAdmin, async (req, res) => {
+  const statusTypeMap = {
+    Pending: 'amber', Approved: 'amber',
+    Dispatched: 'blue', 'In Transit': 'blue', Delivered: 'green',
+  };
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+    order.status     = status;
+    order.statusType = statusTypeMap[status] || 'amber';
+    await order.save();
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Chat ──────────────────────────────────────────────────────────────────────
+
+// Client: send a message to marTex admin
+app.post('/api/chat', requireAuth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) return res.status(400).json({ message: 'Message text is required' });
+    const msg = await Message.create({ userId: req.session.userId, text: text.trim(), sender: 'client' });
+    res.status(201).json(msg);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Client: get all messages in own conversation
+app.get('/api/chat', requireAuth, async (req, res) => {
+  try {
+    const messages = await Message.find({ userId: req.session.userId }).sort({ createdAt: 1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: list all conversations (one entry per unique client, with latest message)
+app.get('/api/admin/chat/conversations', requireAdmin, async (req, res) => {
+  try {
+    const convos = await Message.aggregate([
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: '$userId',
+          lastText: { $first: '$text' },
+          lastSender: { $first: '$sender' },
+          lastAt: { $first: '$createdAt' },
+          unread: {
+            $sum: { $cond: [{ $eq: ['$sender', 'client'] }, 1, 0] },
+          },
+        },
+      },
+      { $sort: { lastAt: -1 } },
+    ]);
+
+    // Populate user info
+    const populated = await Promise.all(
+      convos.map(async (c) => {
+        const user = await User.findById(c._id).select('firstName lastName email');
+        return { ...c, user };
+      })
+    );
+    res.json(populated);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: get all messages in a specific user's conversation
+app.get('/api/admin/chat/:userId', requireAdmin, async (req, res) => {
+  try {
+    const messages = await Message.find({ userId: req.params.userId }).sort({ createdAt: 1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin: send a reply to a specific client
+app.post('/api/admin/chat/:userId', requireAdmin, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) return res.status(400).json({ message: 'Message text is required' });
+    const msg = await Message.create({ userId: req.params.userId, text: text.trim(), sender: 'admin' });
+    res.status(201).json(msg);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
