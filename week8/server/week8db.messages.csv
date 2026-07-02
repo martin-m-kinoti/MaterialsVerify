@@ -1,0 +1,5 @@
+_id,userId,text,sender,createdAt,updatedAt,__v
+6a46089d209de8cd0c1aef6d,6a45e49b8dc634d6abbb0913,Hello,client,2026-07-02T06:43:41.630Z,2026-07-02T06:43:41.630Z,0
+6a4608bc209de8cd0c1aef6e,6a45e49b8dc634d6abbb0913,Hello. How can i help you?,admin,2026-07-02T06:44:12.968Z,2026-07-02T06:44:12.968Z,0
+6a461b13c6358e1a5b44e188,6a45e49b8dc634d6abbb0913,willthe delivery take longer timeto arrive?,client,2026-07-02T08:02:27.181Z,2026-07-02T08:02:27.181Z,0
+6a461b91c6358e1a5b44e18b,6a45e49b8dc634d6abbb0913,Hi. Thank you for reaching out. The delivery will arrive any minute now.,admin,2026-07-02T08:04:33.342Z,2026-07-02T08:04:33.342Z,0
