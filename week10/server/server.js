@@ -17,7 +17,7 @@ const sendMail = require('./utils/sendMail');
 const { validateRegister, validateLogin } = require('./utils/validate');
 
 // Configuring port
-const port = process.env.PORT || 9000;
+const port = process.env.PORT;
 
 const app = express();
 
