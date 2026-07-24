@@ -23,7 +23,7 @@ const app = express();
 
 // Configure middlewares
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:8080',
+  origin: process.env.CLIENT_URL || 'https://materials-verify.vercel.app',
   credentials: true,
 }));
 app.use(express.json());
@@ -44,7 +44,7 @@ app.use(session({
 passport.use(new GoogleStrategy({
   clientID:     process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:  `${process.env.SERVER_URL || 'http://localhost:9000'}/api/auth/google/callback`,
+  callbackURL:  `${process.env.SERVER_URL || 'https://backend-materials-verify.vercel.app'}/api/auth/google/callback`,
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     const email = profile.emails[0].value.toLowerCase();
@@ -264,7 +264,7 @@ app.get('/api/auth/google',
 // Google OAuth callback
 app.get('/api/auth/google/callback', (req, res, next) => {
   passport.authenticate('google', { session: false }, (err, user) => {
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:8080';
+    const clientUrl = process.env.CLIENT_URL || 'https://materials-verify.vercel.app';
     if (err || !user) {
       return res.redirect(`${clientUrl}/login?error=google_auth_failed`);
     }
