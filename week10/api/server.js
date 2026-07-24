@@ -4,6 +4,7 @@ require('dotenv').config();
 // Importing required modules
 const cors = require('cors');
 const session = require('express-session');
+const MongoStore = require('connect-mongo'); // npm install connect-mongo
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -16,8 +17,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const sendMail = require('./utils/sendMail');
 const { validateRegister, validateLogin } = require('./utils/validate');
 
-// Configuring port
-const port = process.env.PORT;
+// Configuring port (only used for local `node server.js`, not on Vercel)
+const port = process.env.PORT || 5000;
 
 const app = express();
 
@@ -28,52 +29,69 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Sessions
+// ── Sessions ─────────────────────────────────────────────────────────────────
+// MemoryStore does not survive across serverless invocations, so we back
+// sessions with MongoDB (you already have a MONGODB_URI configured).
 app.use(session({
-  secret:     process.env.SESSION_SECRET,
-  resave:     false,
+  secret: process.env.SESSION_SECRET,
+  resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions',
+  }),
   cookie: {
     httpOnly: true,
-    secure: false,
-    maxAge: 1000*60*60*24*7 // 7 days
-  }
+    // If CLIENT_URL and SERVER_URL are different origins (typical for a
+    // separate frontend/backend deploy), the cookie must be secure + SameSite=None
+    // or browsers will silently drop it on cross-site requests.
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  },
 }));
 
-// Google OAuth strategy — find or create user from Google profile
-passport.use(new GoogleStrategy({
-  clientID:     process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL:  `${process.env.SERVER_URL}/api/auth/google/callback`,
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const email = profile.emails[0].value.toLowerCase();
-    const nameParts = (profile.displayName || '').split(' ');
+// ── Google OAuth strategy ────────────────────────────────────────────────────
+// Only register the strategy if credentials are actually present. This stops
+// a missing env var from crashing the whole serverless function on cold start —
+// instead /api/auth/google will return a clear error at request time.
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.SERVER_URL) {
+  passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL:  `${process.env.SERVER_URL}/api/auth/google/callback`,
+  }, async (accessToken, refreshToken, profile, done) => {
+    try {
+      const email = profile.emails[0].value.toLowerCase();
+      const nameParts = (profile.displayName || '').split(' ');
 
-    let user = await User.findOne({ googleId: profile.id });
+      let user = await User.findOne({ googleId: profile.id });
 
-    if (!user) {
-      user = await User.findOne({ email });
-      if (user) {
-        user.googleId = profile.id;
-        user.avatar   = profile.photos?.[0]?.value || user.avatar;
-        await user.save();
-      } else {
-        user = await User.create({
-          googleId:  profile.id,
-          firstName: profile.name?.givenName  || nameParts[0]              || 'Unknown',
-          lastName:  profile.name?.familyName || nameParts.slice(1).join(' ') || 'User',
-          email,
-          avatar: profile.photos?.[0]?.value,
-        });
+      if (!user) {
+        user = await User.findOne({ email });
+        if (user) {
+          user.googleId = profile.id;
+          user.avatar   = profile.photos?.[0]?.value || user.avatar;
+          await user.save();
+        } else {
+          user = await User.create({
+            googleId:  profile.id,
+            firstName: profile.name?.givenName  || nameParts[0]              || 'Unknown',
+            lastName:  profile.name?.familyName || nameParts.slice(1).join(' ') || 'User',
+            email,
+            avatar: profile.photos?.[0]?.value,
+          });
+        }
       }
-    }
 
-    return done(null, user);
-  } catch (err) {
-    return done(err, null);
-  }
-}));
+      return done(null, user);
+    } catch (err) {
+      return done(err, null);
+    }
+  }));
+} else {
+  console.warn('Google OAuth env vars missing — /api/auth/google will be unavailable.');
+}
 
 app.use(passport.initialize());
 
@@ -82,12 +100,43 @@ app.set('view engine', 'html');
 // Static folder
 app.use(express.static(__dirname + '/views/'));
 
+// ── Database connection (cached across invocations) ─────────────────────────
+// Serverless functions can reuse a warm container, so we cache the connection
+// promise instead of calling mongoose.connect() on every request.
+let dbConnectionPromise = null;
+function connectDB() {
+  if (!dbConnectionPromise) {
+    dbConnectionPromise = mongoose
+      .connect(process.env.MONGODB_URI)
+      .then(async (conn) => {
+        console.log('Connected to MongoDB');
+        await seedAdmin();
+        return conn;
+      })
+      .catch((err) => {
+        dbConnectionPromise = null; // allow retry on next request
+        throw err;
+      });
+  }
+  return dbConnectionPromise;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('MongoDB connection error:', err.message);
+    res.status(503).json({ message: 'Database unavailable' });
+  }
+});
+
 // Defining route middleware
 app.use('/api', require('./routes/api'));
 
 // User
 app.post('/api/user', async (req, res) => {
-  
+
     const { isValid, errors } = validateRegister(req.body);
     if (!isValid) {
       return res.status(400).json({ message: 'Validation failed', errors });
@@ -133,7 +182,7 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     // Find user by email
     const user = await User.findOne({ email: email.toLowerCase().trim() });
-    if (!user) { 
+    if (!user) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
 
@@ -143,7 +192,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Set session 
+    // Set session
     req.session.userId = user._id;
     req.session.role = user.role;
     req.session.userName = `${user.firstName} ${user.lastName}`;
@@ -257,9 +306,12 @@ app.post('/api/auth/reset-password/:token', async (req, res) => {
 });
 
 // Initiate Google OAuth flow
-app.get('/api/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'], session: false })
-);
+app.get('/api/auth/google', (req, res, next) => {
+  if (!passport._strategies.google) {
+    return res.status(503).json({ message: 'Google OAuth is not configured on the server.' });
+  }
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false })(req, res, next);
+});
 
 // Google OAuth callback
 app.get('/api/auth/google/callback', (req, res, next) => {
@@ -582,20 +634,17 @@ async function seedAdmin() {
   console.log(`Bootstrap admin created: ${email}`);
 }
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(async () => {
-    console.log('Connected to MongoDB');
-    await seedAdmin();
-    // Listening to port
-    app.listen(port, () => {
-      console.log(`Listening On http://localhost:${port}/api`);
+if (require.main === module) {
+  connectDB()
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`Listening On http://localhost:${port}/api`);
+      });
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err.message);
+      process.exit(1);
     });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+}
 
 module.exports = app;
