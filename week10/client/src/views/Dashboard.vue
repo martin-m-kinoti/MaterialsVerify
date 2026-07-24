@@ -124,7 +124,7 @@
 import AppLayout from '@/components/AppLayout.vue'
 import axios from 'axios'
 
-const API = 'http://localhost:9000'
+const API = 'https://backend-materials-verify.vercel.app'
 
 export default {
   name: 'Dashboard',

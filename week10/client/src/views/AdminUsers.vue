@@ -158,7 +158,7 @@
 import axios from 'axios';
 import AdminLayout from '../components/AdminLayout.vue';
 
-const API = 'http://localhost:9000';
+const API = 'https://backend-materials-verify.vercel.app';
 
 const KENYA_COUNTIES = [
   'Baringo','Bomet','Bungoma','Busia','Elgeyo-Marakwet','Embu',

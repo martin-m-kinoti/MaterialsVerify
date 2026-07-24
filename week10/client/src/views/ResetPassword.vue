@@ -121,7 +121,7 @@ export default {
       this.loading = true;
       try {
         await axios.post(
-          `http://localhost:9000/api/auth/reset-password/${this.token}`,
+          `https://backend-materials-verify.vercel.app/api/auth/reset-password/${this.token}`,
           { password: this.form.password }
         );
         this.done = true;

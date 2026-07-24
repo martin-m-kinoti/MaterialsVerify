@@ -121,7 +121,7 @@ export default {
   },
   methods: {
     handleGoogleLogin() {
-      window.location.href = 'http://localhost:9000/api/auth/google';
+      window.location.href = 'https://backend-materials-verify.vercel.app/api/auth/google';
     },
     validate() {
       const e = {};

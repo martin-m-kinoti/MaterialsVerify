@@ -292,7 +292,7 @@ export default {
     },
     async logout() {
       try {
-        await axios.post('http://localhost:9000/api/auth/logout', {}, { withCredentials: true });
+        await axios.post('https://backend-materials-verify.vercel.app/api/auth/logout', {}, { withCredentials: true });
       } finally {
         localStorage.removeItem('mv_user');
         this.user = null;

@@ -71,7 +71,7 @@ export default {
       this.loading = true;
       this.submittedEmail = this.email.trim();
       try {
-        await axios.post('http://localhost:9000/api/auth/forgot-password', {
+        await axios.post('https://backend-materials-verify.vercel.app/api/auth/forgot-password', {
           email: this.submittedEmail,
         });
         this.sent = true;

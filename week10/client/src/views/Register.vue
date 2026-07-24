@@ -243,7 +243,7 @@ export default {
   },
   methods: {
     handleGoogleSignup() {
-      window.location.href = 'http://localhost:9000/api/auth/google';
+      window.location.href = 'https://backend-materials-verify.vercel.app/api/auth/google';
     },
     validate() {
       const e = {};
@@ -298,7 +298,7 @@ export default {
       this.error = '';
 
       try {
-        const res = await axios.post('http://localhost:9000/api/user', {
+        const res = await axios.post('https://backend-materials-verify.vercel.app/api/user', {
           firstName: this.form.firstName,
           lastName: this.form.lastName,
           email: this.form.email,
