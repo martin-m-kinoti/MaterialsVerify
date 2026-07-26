@@ -4,7 +4,7 @@ require('dotenv').config();
 // Importing required modules
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo'); // npm install connect-mongo
+const MongoStore = require('connect-mongo').default || require('connect-mongo'); // npm install connect-mongo
 const crypto = require('crypto');
 const express = require('express');
 const mongoose = require('mongoose');
