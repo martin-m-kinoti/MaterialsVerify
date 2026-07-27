@@ -22,6 +22,9 @@ const port = process.env.PORT || 5000;
 
 const app = express();
 
+// Trust Vercel's reverse proxy so express-session can set secure cookies
+app.set('trust proxy', 1);
+
 // Configure middlewares
 app.use(cors({
   origin: process.env.CLIENT_URL,
