@@ -329,14 +329,14 @@ app.get('/api/auth/google/callback', (req, res, next) => {
     req.session.userName = `${user.firstName} ${user.lastName}`;
     req.session.loginTime = new Date().toISOString();
 
-    const params = new URLSearchParams({
-      email:     user.email,
-      role:      user.role,
-      firstName: user.firstName,
-      lastName:  user.lastName,
-      ...(user.avatar ? { avatar: user.avatar } : {}),
+    // ✅ Save the session BEFORE redirecting
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save failed:', err);
+        return res.redirect(`${clientUrl}/login?error=session_save_failed`);
+      }
+      res.redirect(`${clientUrl}/auth/google/callback?${params.toString()}`);
     });
-    res.redirect(`${clientUrl}/auth/google/callback?${params.toString()}`);
   })(req, res, next);
 });
 
